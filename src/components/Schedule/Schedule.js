@@ -11,7 +11,7 @@ const WeekTable = styled.div`
 `;
 
 
-export const SchedulePicker = ({schedule, setSchedule}) => {
+export const Schedule = ({schedule, setSchedule}) => {
 
   const toggleHour = (index) => (hour) => {
     const hourIndex = schedule[index].selectedHours.indexOf(hour);
@@ -51,11 +51,10 @@ export const SchedulePicker = ({schedule, setSchedule}) => {
         />
       )}
     </WeekTable>
-    <Button onClick={() => console.table(schedule)}>Salvar</Button>
   </Fragment>;
 };
 
-SchedulePicker.propTypes = {
+Schedule.propTypes = {
   schedule: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string,
     selectedHours: PropTypes.arrayOf(PropTypes.number),

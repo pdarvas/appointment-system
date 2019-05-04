@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
+    "dayjs": "^1.8.13",
     "jss": "^9.8.7",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",

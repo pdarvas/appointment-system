@@ -10,6 +10,7 @@ const TableCellContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: pre-line;
   background-color: ${(props) => props.selected ? '#69CC5E' : 'white'};
   
   ${(props) => props.clickable && !props.selected &&

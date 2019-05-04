@@ -3,7 +3,7 @@ import './App.css';
 import JssProvider from 'react-jss/lib/JssProvider';
 import {create} from 'jss';
 import {createGenerateClassName, jssPreset} from '@material-ui/core/styles';
-import {SchedulePicker} from './components/SchedulePicker/SchedulePicker';
+import {NewAppointmentPicker} from './components/NewAppointmentPicker/NewAppointmentPicker';
 
 const styleNode = document.createComment('jss-insertion-point');
 document.head.insertBefore(styleNode, document.head.firstChild);
@@ -40,11 +40,10 @@ const initialSchedule = [
 
 
 function App() {
-  const [schedule, setSchedule] = useState(initialSchedule);
   return (
     <JssProvider jss={jss} generateClassName={generateClassName}>
       <div className="App">
-        <SchedulePicker schedule={schedule} setSchedule={(newSchedule) => setSchedule(newSchedule)}/>
+        <NewAppointmentPicker />
       </div>
     </JssProvider>
   );

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import {TableCell} from './TableCell';
 import {TableColumn} from './TableColumn';
 import {DayColumn} from './DayColumn';
-import {Button} from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const WeekTable = styled.div`
@@ -11,24 +10,7 @@ const WeekTable = styled.div`
 `;
 
 
-export const Schedule = ({schedule, setSchedule}) => {
-
-  const toggleHour = (index) => (hour) => {
-    const hourIndex = schedule[index].selectedHours.indexOf(hour);
-    const newSchedule = [...schedule];
-    const newSelectedHours = [...schedule[index].selectedHours];
-
-    if (hourIndex > -1) {
-      newSelectedHours.splice(hourIndex, 1);
-    } else {
-      newSelectedHours.push(hour);
-    }
-
-    newSchedule[index].selectedHours = newSelectedHours;
-
-    setSchedule(newSchedule);
-  };
-
+export const Schedule = ({schedule, setSchedule, onClickCell, isDisplay}) => {
   return <Fragment>
     <WeekTable>
       <TableColumn>
@@ -43,11 +25,12 @@ export const Schedule = ({schedule, setSchedule}) => {
         <TableCell text={'17h - 18h'}/>
       </TableColumn>
 
-      {schedule.map((day, index) =>
+      {schedule.map((day) =>
         <DayColumn
           key={day.label}
-          toggleHour={toggleHour(index)}
+          onClick={onClickCell(day.dayjs)}
           day={day}
+          isDisplay={isDisplay}
         />
       )}
     </WeekTable>

@@ -13,16 +13,38 @@ const TableCellContainer = styled.div`
   white-space: pre-line;
   background-color: ${(props) => props.selected ? '#69CC5E' : 'white'};
   
-  ${(props) => props.clickable && !props.selected &&
-  `&:hover {
-    background-color: #b7ffb5;
-  }`}
-  ${(props) => props.clickable &&
-  `&:active {
-    background-color: #229218;
-  }`}
-  
+  ${(props) => getCSSForCellState(props.state)}
 `;
+
+const getCSSForCellState = (state) => {
+  switch (state) {
+    case 'UNSELECTED':
+      return `&:hover {
+        background-color: #b7ffb5;
+      }
+      &:active {
+        background-color: #229218;
+      }`;
+    case 'AVAILABLE':
+      return `background-color: #69CC5E;
+      &:hover {
+        background-color: #b7ffb5;
+      }
+      &:active {
+        background-color: #229218;
+      }`;
+    case 'SCHEDULED':
+      return `background-color: #6181CC;
+      &:hover {
+        background-color: #3863CC;
+      }
+      &:active {
+        background-color: #164CCC;
+      }`;
+    default:
+      return ''
+  }
+};
 
 export const TableCell = (props) => {
   const onCellClick = () => {
@@ -33,8 +55,7 @@ export const TableCell = (props) => {
 
   return <TableCellContainer
     onClick={onCellClick}
-    selected={props.selected}
-    clickable={props.clickable}
+    state={props.state}
   >
     {props.text}
   </TableCellContainer>

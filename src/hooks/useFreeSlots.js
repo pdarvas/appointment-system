@@ -4,33 +4,34 @@ import Firebase from '../Firebase';
 
 const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-export const useAvailableHoursSchedule = () => {
+export const useFreeSlots = () => {
   const [currentDay, setCurrentDay] = useState(dayjs());
   const [schedule, setSchedule] = useState([]);
 
   useEffect(() => {
-    getWeekForDay(currentDay).then(setSchedule);
+    return Firebase.getSlotsForWeek(currentDay, (availableHours) => {
+      const dayjsAppointments = availableHours.map(hour => {
+        return dayjs(hour.time.toDate())
+      });
+
+      getWeekForDay(currentDay, dayjsAppointments).then(setSchedule)
+    });
   }, [currentDay]);
 
   const getNextWeek = () => setCurrentDay(currentDay.add(1, 'week'));
 
   const getLastWeek = () => setCurrentDay(currentDay.subtract(1, 'week'));
 
-  const refresh = () => getWeekForDay(currentDay).then(setSchedule);
-
   return {
     schedule,
     setSchedule,
     getNextWeek,
     getLastWeek,
-    refresh
   };
 };
 
-const getWeekForDay = async (referenceDay) =>{
+const getWeekForDay = async (referenceDay, weeksSelectedHours) =>{
   const week = [];
-
-  const weeksSelectedHours = await getSelectedHoursForWeek(referenceDay);
 
   for (let i = 0; i < 7; i++) {
     const day = dayjs(referenceDay).day(i);
@@ -44,23 +45,14 @@ const getWeekForDay = async (referenceDay) =>{
   return week
 };
 
-const getSelectedHoursForWeek = async (referenceDay) => {
-  const appointments = await Firebase.getAppointmentsForWeek(referenceDay);
-  const a = appointments.map(appointment => {
-    return dayjs(appointment.time.toDate())
-  });
-  return a
-};
-
 const getSelectedHoursForDay = (day, selectedInWeek) => {
   const a = selectedInWeek.reduce((acc, selected) => {
-      if (selected.day() === day.day()) {
-        return [...acc, selected.hour()]
-      }
-      else {
-        return acc
-      }
+    if (selected.day() === day.day()) {
+      return [...acc, selected.hour()]
+    }
+    else {
+      return acc
+    }
   }, []);
-  console.log(day.day(), a);
   return a
 };

@@ -1,52 +1,26 @@
 import React, {Fragment, useState} from 'react';
 import {Schedule} from '../Schedule/Schedule';
-import {useAvailableHoursSchedule} from '../../hooks/useAvailableHoursSchedule';
 import Button from '@material-ui/core/Button';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import styled from 'styled-components';
-import {ConfirmationDialog} from './ConfirmationDialog';
 import Firebase from '../../Firebase';
+import {useFreeSlots} from '../../hooks/useFreeSlots';
 
 const PickerContainer = styled.div`
   display: flex;
 `;
 
-export const NewAppointmentPicker = () => {
-  const {schedule, setSchedule, getLastWeek, getNextWeek, refresh} = useAvailableHoursSchedule();
-  const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(undefined);
-
-  const createAppointment = (time) => {
-    Firebase.createAppointment({time: time.toDate()}).then(refresh);
-  };
+export const AvailabilityPicker = () => {
+  const {schedule, getLastWeek, getNextWeek} = useFreeSlots();
 
   const onClickCell = (day) => (hour) => {
-    setSelectedTime(day.hour(hour));
-    setConfirmationOpen(true);
+    Firebase.toggleSlotByTime(day.hour(hour));
   };
-
-  const closeConfirmation = () => {
-    setConfirmationOpen(false);
-    setSelectedTime(undefined);
-  };
-
-  const onConfirm = () => {
-    createAppointment(selectedTime);
-    closeConfirmation()
-  };
-
 
   return <PickerContainer>
-    {confirmationOpen &&
-    <ConfirmationDialog
-      confirmationOpen={confirmationOpen}
-      closeConfirmation={closeConfirmation}
-      selectedTime={selectedTime}
-      onConfirm={onConfirm}
-    />}
     <Button onClick={getLastWeek}><NavigateBefore/></Button>
-    <Schedule setSchedule={setSchedule} schedule={schedule} onClickCell={onClickCell}/>
+    <Schedule schedule={schedule} onClickCell={onClickCell}/>
     <Button onClick={getNextWeek}><NavigateNext/></Button>
   </PickerContainer>
 };

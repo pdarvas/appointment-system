@@ -3,7 +3,7 @@ import {TableColumn} from './TableColumn';
 import {TableCell} from './TableCell';
 import PropTypes from 'prop-types';
 
-export const DayColumn = ({day, onClick, isDisplay}) => {
+export const DayColumn = ({day, onClick, isDisplay, isPicker}) => {
   const possibleHours = [8, 9, 10, 11, 14, 15, 16, 17];
 
   const getStateForHour = (hour) => {
@@ -20,6 +20,11 @@ export const DayColumn = ({day, onClick, isDisplay}) => {
     if (selected) {
       return 'AVAILABLE';
     }
+
+    if (isPicker) {
+      return
+    }
+
     return 'UNSELECTED';
   };
 

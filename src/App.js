@@ -4,6 +4,8 @@ import JssProvider from 'react-jss/lib/JssProvider';
 import {create} from 'jss';
 import {createGenerateClassName, jssPreset} from '@material-ui/core/styles';
 import {NewAppointmentPicker} from './components/NewAppointmentPicker/NewAppointmentPicker';
+import {ScheduledAppointmentsViewer} from './components/ScheduledAppointmentsViewer/ScheduledAppointmentsViewer';
+import {AvailabilityPicker} from './components/AvailabilityPicker/AvailabilityPicker';
 
 const styleNode = document.createComment('jss-insertion-point');
 document.head.insertBefore(styleNode, document.head.firstChild);
@@ -43,7 +45,9 @@ function App() {
   return (
     <JssProvider jss={jss} generateClassName={generateClassName}>
       <div className="App">
-        <NewAppointmentPicker />
+        <ScheduledAppointmentsViewer />
+        <NewAppointmentPicker/>
+        <AvailabilityPicker/>
       </div>
     </JssProvider>
   );

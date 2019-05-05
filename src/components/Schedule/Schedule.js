@@ -10,7 +10,7 @@ const WeekTable = styled.div`
 `;
 
 
-export const Schedule = ({schedule, setSchedule, onClickCell, isDisplay}) => {
+export const Schedule = ({schedule, onClickCell, isDisplay, isPicker}) => {
   return <Fragment>
     <WeekTable>
       <TableColumn>
@@ -31,6 +31,7 @@ export const Schedule = ({schedule, setSchedule, onClickCell, isDisplay}) => {
           onClick={onClickCell(day.dayjs)}
           day={day}
           isDisplay={isDisplay}
+          isPicker={isPicker}
         />
       )}
     </WeekTable>
@@ -42,5 +43,4 @@ Schedule.propTypes = {
     label: PropTypes.string,
     selectedHours: PropTypes.arrayOf(PropTypes.number),
   })).isRequired,
-  setSchedule: PropTypes.func.isRequired
 };

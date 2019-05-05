@@ -18,29 +18,92 @@ class Firebase {
     this.database = firebase.firestore()
   }
 
-  async getAppointmentsForWeek(day) {
-    const appointmentsRef = this.database.collection('appointments');
+  getAppointmentsForWeek(day, callback) {
+    const appointmentsRef = this.database.collection('availableHours');
 
     const pureDay = getPureDay(day.day(0));
 
     const query = appointmentsRef
       .where('time', '>', pureDay.toDate())
-      .where('time', '<', pureDay.add(7, 'day').toDate());
+      .where('time', '<', pureDay.add(7, 'day').toDate())
+      .where('scheduled', '==', true);
+
+    return query.onSnapshot((snapshot => callback(snapshot.docs.map(doc => doc.data()))))
+  }
+
+  getSlotsForWeek(day, callback) {
+    const appointmentsRef = this.database.collection('availableHours');
+
+    const pureDay = getPureDay(day.day(0));
+
+    const query = appointmentsRef
+      .where('time', '>', pureDay.toDate())
+      .where('time', '<', pureDay.add(7, 'day').toDate())
+      .where('scheduled', '==', false);
+
+    return query.onSnapshot((snapshot => callback(snapshot.docs.map(doc => doc.data()))))
+  }
+
+  async createAppointment(time) {
+    const appointmentsRef = this.database.collection('availableHours');
+    const query = appointmentsRef
+      .where('time', '==', getPureHour(time).toDate())
+      .where('scheduled', '==', false);
+
+    const hours = await query.get();
+
+    const hourToReplace = hours.docs[0].id;
+
+    await appointmentsRef.doc(hourToReplace).set({
+      time: getPureHour(time).toDate(),
+      scheduled: true,
+    });
+  }
+
+  async toggleSlotByTime(time) {
+    const appointmentsRef = this.database.collection('availableHours');
+    const query = appointmentsRef
+      .where('time', '==', getPureHour(time).toDate());
+
+    const slots = await query.get();
+
+    if (slots.empty) {
+      return appointmentsRef.add({
+        time: getPureHour(time).toDate(),
+        scheduled: false,
+      });
+    }
+
+    return slots.docs[0].ref.delete();
+  }
+
+  async getAppointmentDetailByTime(time) {
+    const appointmentsRef = this.database.collection('availableHours');
+    const query = appointmentsRef
+      .where('time', '==', getPureHour(time).toDate())
+      .where('scheduled', '==', true);
 
     const appointments = await query.get();
 
-    return appointments.docs.map(doc => doc.data())
+    if (!appointments.empty) {
+     return {...appointments.docs[0].data(), id: appointments.docs[0].id}
+    }
+    return undefined
   }
 
-  async createAppointment(appointment) {
-    const appointmentsRef = this.database.collection('appointments');
+  async deleteAppointment(id) {
+    const appointmentsRef = this.database.collection('availableHours');
 
-    await appointmentsRef.add(appointment);
+    return appointmentsRef.doc(id).update({scheduled: false});
   }
 }
 
-const getPureDay = (day) => {
-  return day.hour(0).minute(0).second(0).millisecond(0)
+const getPureDay = (time) => {
+  return time.hour(0).minute(0).second(0).millisecond(0)
+};
+
+const getPureHour = (time) => {
+  return time.minute(0).second(0).millisecond(0)
 };
 
 export default new Firebase();

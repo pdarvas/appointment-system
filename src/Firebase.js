@@ -1,6 +1,7 @@
 // Firebase App is always required and must be first
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -15,7 +16,8 @@ const firebaseConfig = {
 class Firebase {
   constructor() {
     firebase.initializeApp(firebaseConfig);
-    this.database = firebase.firestore()
+    this.database = firebase.firestore();
+    this.auth = firebase.auth();
   }
 
   getAppointmentsForWeek(day, callback) {
@@ -95,6 +97,17 @@ class Firebase {
     const appointmentsRef = this.database.collection('availableHours');
 
     return appointmentsRef.doc(id).update({scheduled: false});
+  }
+
+  async getUser(id) {
+    const usersRef = this.database.collection('users');
+
+    const user = await usersRef.doc(id).get();
+
+    return {
+      id,
+      ...user.data()
+    }
   }
 }
 

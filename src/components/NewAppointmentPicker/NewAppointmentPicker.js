@@ -1,27 +1,24 @@
-import React, {Fragment, useState} from 'react';
+import React, {useState} from 'react';
 import {Schedule} from '../Schedule/Schedule';
-import {useAppointmensSchedule} from '../../hooks/useAppointmentsSchedule';
 import Button from '@material-ui/core/Button';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import styled from 'styled-components';
-import {ConfirmationDialog} from './ConfirmationDialog';
 import Firebase from '../../Firebase';
 import {Dialog} from '../Dialog/Dialog';
 import {useFreeSlots} from '../../hooks/useFreeSlots';
+import {Paper} from '../Paper';
+import {PageContainer} from '../PageContainer';
+import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
 
 const PickerContainer = styled.div`
   display: flex;
 `;
 
-export const NewAppointmentPicker = () => {
-  const {schedule, getLastWeek, getNextWeek} = useFreeSlots();
+export const NewAppointmentPicker = (props) => {
+  const {schedule, getLastWeek, getNextWeek, loading} = useFreeSlots();
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState(undefined);
-
-  const createAppointment = (time) => {
-    Firebase.createAppointment(time)
-  };
 
   const onClickCell = (day) => (hour) => {
     setSelectedTime(day.hour(hour));
@@ -34,27 +31,31 @@ export const NewAppointmentPicker = () => {
   };
 
   const onConfirm = () => {
-    createAppointment(selectedTime);
-    closeConfirmation()
+    Firebase.createAppointment(selectedTime).then(() => {
+      props.history.push('/user/schedule')
+    });
+    closeConfirmation();
   };
 
-  return <PickerContainer>
-    {confirmationOpen &&
-    <Dialog
-      open={confirmationOpen}
-      onClose={closeConfirmation}
-      title={'Criar Agendamento'}
-      text={`Tem certeza que deseja criar um agendamento no dia ${selectedTime.format('DD/MM')},
+  return loading ? <LoadingOverlay/> : <Paper>
+    <PickerContainer>
+      {confirmationOpen &&
+      <Dialog
+        open={confirmationOpen}
+        onClose={closeConfirmation}
+        title={'Criar Agendamento'}
+        text={`Tem certeza que deseja criar um agendamento no dia ${selectedTime.format('DD/MM')},
         às ${selectedTime.format('HH:mm')}?`}
-      actions={[
-        <Button onClick={closeConfirmation}>Cancelar</Button>,
-        <Button onClick={onConfirm}>Confirmar</Button>
-      ]}
-    />}
-    <Button onClick={getLastWeek}><NavigateBefore/></Button>
-    <Schedule schedule={schedule} onClickCell={onClickCell} isPicker/>
-    <Button onClick={getNextWeek}><NavigateNext/></Button>
-  </PickerContainer>
+        actions={[
+          <Button onClick={closeConfirmation}>Cancelar</Button>,
+          <Button onClick={onConfirm}>Confirmar</Button>
+        ]}
+      />}
+      <Button onClick={getLastWeek}><NavigateBefore/></Button>
+      <Schedule schedule={schedule} onClickCell={onClickCell} isPicker/>
+      <Button onClick={getNextWeek}><NavigateNext/></Button>
+    </PickerContainer>
+  </Paper>;
 };
 
 // const onClickCell = (day) => (hour) => {

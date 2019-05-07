@@ -7,6 +7,7 @@ const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', '
 export const useAppointmensSchedule = () => {
   const [currentDay, setCurrentDay] = useState(dayjs());
   const [schedule, setSchedule] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     return Firebase.getAppointmentsForWeek(currentDay, (appointments) => {
@@ -14,7 +15,10 @@ export const useAppointmensSchedule = () => {
         return dayjs(appointment.time.toDate())
       });
 
-      getWeekForDay(currentDay, dayjsAppointments).then(setSchedule)
+      getWeekForDay(currentDay, dayjsAppointments).then((newSchedule) => {
+        setSchedule(newSchedule);
+        setLoading(false);
+      })
     });
   }, [currentDay]);
 
@@ -27,6 +31,7 @@ export const useAppointmensSchedule = () => {
     setSchedule,
     getNextWeek,
     getLastWeek,
+    loading
   };
 };
 

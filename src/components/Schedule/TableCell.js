@@ -4,15 +4,12 @@ import PropTypes from 'prop-types';
 
 const TableCellContainer = styled.div`
   height: 50px;
-  width: 100%;
-  border: 1px solid #cccccc;
-  border-radius: 1px;
+  border: 0.1px solid rgba(204,204,204,0.51);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: pre-line;
-  background-color: ${(props) => props.selected ? '#69CC5E' : 'white'};
-  
   ${(props) => getCSSForCellState(props.state)}
 `;
 
@@ -20,18 +17,18 @@ const getCSSForCellState = (state) => {
   switch (state) {
     case 'UNSELECTED':
       return `&:hover {
-        background-color: #b7ffb5;
+        background-color: rgba(42,176,0,0.55);
       }
       &:active {
-        background-color: #229218;
+        background-color: rgb(31,109,0);
       }`;
     case 'AVAILABLE':
-      return `background-color: #69CC5E;
+      return `background-color: #2AB000;
       &:hover {
-        background-color: #b7ffb5;
+        background-color: rgba(42,176,0,0.55);
       }
       &:active {
-        background-color: #229218;
+        background-color: rgb(31,109,0);
       }`;
     case 'SCHEDULED':
       return `background-color: #6181CC;

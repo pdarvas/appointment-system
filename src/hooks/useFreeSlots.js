@@ -7,6 +7,7 @@ const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', '
 export const useFreeSlots = () => {
   const [currentDay, setCurrentDay] = useState(dayjs());
   const [schedule, setSchedule] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     return Firebase.getSlotsForWeek(currentDay, (availableHours) => {
@@ -14,7 +15,7 @@ export const useFreeSlots = () => {
         return dayjs(hour.time.toDate())
       });
 
-      getWeekForDay(currentDay, dayjsAppointments).then(setSchedule)
+      getWeekForDay(currentDay, dayjsAppointments).then(setSchedule).then(() => setLoading(false))
     });
   }, [currentDay]);
 
@@ -27,6 +28,7 @@ export const useFreeSlots = () => {
     setSchedule,
     getNextWeek,
     getLastWeek,
+    loading
   };
 };
 

@@ -8,13 +8,15 @@ import {Schedule} from '../Schedule/Schedule';
 import styled from 'styled-components';
 import {Dialog} from '../Dialog/Dialog';
 import dayjs from 'dayjs';
+import {Paper} from '../Paper';
+import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
 
 const PickerContainer = styled.div`
   display: flex;
 `;
 
 export const ScheduledAppointmentsViewer = () => {
-  const {schedule, getLastWeek, getNextWeek} = useAppointmensSchedule();
+  const {schedule, getLastWeek, getNextWeek, loading} = useAppointmensSchedule();
   const [appointmentDetail, setAppointmentDetail] = useState(undefined);
 
   const onClickCell = (day) => (hour) => {
@@ -28,24 +30,26 @@ export const ScheduledAppointmentsViewer = () => {
 
   const onDelete = () => {
     Firebase.deleteAppointment(appointmentDetail.id);
-    closeDialog()
+    closeDialog();
   };
 
-  return <PickerContainer>
-    {appointmentDetail &&
-    <Dialog
-      open={appointmentDetail}
-      onClose={closeDialog}
-      title={'Agendamento'}
-      text={`Data: ${dayjs(appointmentDetail.time.toDate()).format('DD:MM')}
+  return loading ? <LoadingOverlay/> : <Paper>
+    <PickerContainer>
+      {appointmentDetail &&
+      <Dialog
+        open={appointmentDetail}
+        onClose={closeDialog}
+        title={'Agendamento'}
+        text={`Data: ${dayjs(appointmentDetail.time.toDate()).format('DD:MM')}
       Horário: ${dayjs(appointmentDetail.time.toDate()).format('HH:mm')}`}
-      actions={[
-        <Button onClick={closeDialog}>Fechar</Button>,
-        <Button onClick={onDelete}>Excluir</Button>
-      ]}
-    />}
-    <Button onClick={getLastWeek}><NavigateBefore/></Button>
-    <Schedule schedule={schedule} onClickCell={onClickCell} isDisplay/>
-    <Button onClick={getNextWeek}><NavigateNext/></Button>
-  </PickerContainer>
+        actions={[
+          <Button onClick={closeDialog}>Fechar</Button>,
+          <Button onClick={onDelete}>Excluir</Button>
+        ]}
+      />}
+      <Button onClick={getLastWeek}><NavigateBefore/></Button>
+      <Schedule schedule={schedule} onClickCell={onClickCell} isDisplay/>
+      <Button onClick={getNextWeek}><NavigateNext/></Button>
+    </PickerContainer>
+  </Paper>;
 };

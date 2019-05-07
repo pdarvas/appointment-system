@@ -6,23 +6,27 @@ import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import styled from 'styled-components';
 import Firebase from '../../Firebase';
 import {useFreeSlots} from '../../hooks/useFreeSlots';
+import {Paper} from '../Paper';
+import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
 
 const PickerContainer = styled.div`
   display: flex;
 `;
 
 export const AvailabilityPicker = () => {
-  const {schedule, getLastWeek, getNextWeek} = useFreeSlots();
+  const {schedule, getLastWeek, getNextWeek, loading} = useFreeSlots();
 
   const onClickCell = (day) => (hour) => {
     Firebase.toggleSlotByTime(day.hour(hour));
   };
 
-  return <PickerContainer>
-    <Button onClick={getLastWeek}><NavigateBefore/></Button>
-    <Schedule schedule={schedule} onClickCell={onClickCell}/>
-    <Button onClick={getNextWeek}><NavigateNext/></Button>
-  </PickerContainer>
+  return loading ? <LoadingOverlay/> :  <Paper>
+    <PickerContainer>
+      <Button onClick={getLastWeek}><NavigateBefore/></Button>
+      <Schedule schedule={schedule} onClickCell={onClickCell}/>
+      <Button onClick={getNextWeek}><NavigateNext/></Button>
+    </PickerContainer>
+  </Paper>;
 };
 
 // const onClickCell = (day) => (hour) => {

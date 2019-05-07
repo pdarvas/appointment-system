@@ -17,6 +17,7 @@ export const Container = styled.div`
 
 export const Tab = styled.div`
   height: 100%;
+  padding: 10px;
   width: 120px;
   display: flex;
   justify-content: center;

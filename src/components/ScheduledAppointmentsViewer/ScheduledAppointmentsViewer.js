@@ -19,9 +19,15 @@ export const ScheduledAppointmentsViewer = () => {
   const {schedule, getLastWeek, getNextWeek, loading} = useAppointmensSchedule();
   const [appointmentDetail, setAppointmentDetail] = useState(undefined);
 
+  const getUserForAppointment = (appointment) => {
+    Firebase.getUser(appointment.user).then(user => {
+      setAppointmentDetail({...appointment, ...user})
+    })
+  };
+
   const onClickCell = (day) => (hour) => {
     Firebase.getAppointmentDetailByTime(day.hour(hour))
-      .then(setAppointmentDetail);
+      .then(getUserForAppointment);
   };
 
   const closeDialog = () => {
@@ -40,8 +46,8 @@ export const ScheduledAppointmentsViewer = () => {
         open={appointmentDetail}
         onClose={closeDialog}
         title={'Agendamento'}
-        text={`Data: ${dayjs(appointmentDetail.time.toDate()).format('DD:MM')}
-      Horário: ${dayjs(appointmentDetail.time.toDate()).format('HH:mm')}`}
+        text={`Data: ${dayjs(appointmentDetail.date.toDate()).format('DD:MM')}
+      Horário: ${dayjs(appointmentDetail.date.toDate()).format('HH:mm')}`}
         actions={[
           <Button onClick={closeDialog}>Fechar</Button>,
           <Button onClick={onDelete}>Excluir</Button>

@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import Firebase from '../Firebase';
+import {AuthContext} from '../App';
 
 const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -8,19 +9,31 @@ export const useAppointmensSchedule = () => {
   const [currentDay, setCurrentDay] = useState(dayjs());
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {user, loading: userLoading} = useContext(AuthContext);
 
   useEffect(() => {
-    return Firebase.getAppointmentsForWeek(currentDay, (appointments) => {
-      const dayjsAppointments = appointments.map(appointment => {
-        return dayjs(appointment.time.toDate())
+    if (!user) {
+      return () => {}
+    }
+
+    const handleGetAppointments = (appointments) => {
+      const appointmentDates = appointments.map(appointment => {
+        return dayjs(appointment.date.toDate())
       });
 
-      getWeekForDay(currentDay, dayjsAppointments).then((newSchedule) => {
-        setSchedule(newSchedule);
-        setLoading(false);
-      })
-    });
-  }, [currentDay]);
+      mapAppointmentsToSchedule(currentDay, appointmentDates)
+        .then(setSchedule)
+        .then(() => setLoading(false))
+    };
+
+    if (user.admin) {
+      return Firebase.getAppointmentsForWeek(currentDay, handleGetAppointments);
+    }
+
+    console.log('ta aqui');
+    return Firebase.getAppointmentsForWeekAndUser(currentDay, user.id, handleGetAppointments);
+
+  }, [currentDay, user]);
 
   const getNextWeek = () => setCurrentDay(currentDay.add(1, 'week'));
 
@@ -31,12 +44,12 @@ export const useAppointmensSchedule = () => {
     setSchedule,
     getNextWeek,
     getLastWeek,
-    loading
+    loading: loading || userLoading
   };
 };
 
-const getWeekForDay = async (referenceDay, weeksSelectedHours) =>{
-  const week = [];
+const mapAppointmentsToSchedule = async (referenceDay, weeksSelectedHours) =>{
+  const schedule = [];
 
   for (let i = 0; i < 7; i++) {
     const day = dayjs(referenceDay).day(i);
@@ -45,13 +58,13 @@ const getWeekForDay = async (referenceDay, weeksSelectedHours) =>{
 
     const selectedHours = getSelectedHoursForDay(day, weeksSelectedHours);
 
-    week.push({label, selectedHours, dayjs: day})
+    schedule.push({label, selectedHours, dayjs: day})
   }
-  return week
+  return schedule
 };
 
 const getSelectedHoursForDay = (day, selectedInWeek) => {
-  const a = selectedInWeek.reduce((acc, selected) => {
+  return selectedInWeek.reduce((acc, selected) => {
       if (selected.day() === day.day()) {
         return [...acc, selected.hour()]
       }
@@ -59,5 +72,4 @@ const getSelectedHoursForDay = (day, selectedInWeek) => {
         return acc
       }
   }, []);
-  return a
 };

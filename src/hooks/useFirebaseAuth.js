@@ -7,7 +7,6 @@ export const useFirebaseAuth = () => {
 
   useEffect(() => {
     return Firebase.auth.onAuthStateChanged(auth => {
-      console.log('BATE', auth);
       if(auth) {
         Firebase.getUser(auth.uid).then((user) => {
           setLoading(false);

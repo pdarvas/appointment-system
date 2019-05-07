@@ -21,69 +21,87 @@ class Firebase {
   }
 
   getAppointmentsForWeek(day, callback) {
-    const appointmentsRef = this.database.collection('availableHours');
+    const appointmentsRef = this.database.collection('appointments');
 
     const pureDay = getPureDay(day.day(0));
 
     const query = appointmentsRef
-      .where('time', '>', pureDay.toDate())
-      .where('time', '<', pureDay.add(7, 'day').toDate())
-      .where('scheduled', '==', true);
+      .where('date', '>', pureDay.toDate())
+      .where('date', '<', pureDay.add(7, 'day').toDate());
 
     return query.onSnapshot((snapshot => callback(snapshot.docs.map(doc => doc.data()))))
   }
 
-  getSlotsForWeek(day, callback) {
-    const appointmentsRef = this.database.collection('availableHours');
+  getAppointmentsForWeekAndUser(day, userId, callback) {
+    const appointmentsRef = this.database.collection('appointments');
+
+    const pureDay = getPureDay(day.day(0));
+
+    console.log('id', userId);
+
+    const query = appointmentsRef
+      .where('date', '>', pureDay.toDate())
+      .where('date', '<', pureDay.add(7, 'day').toDate())
+      .where('user', '==', userId);
+
+    return query.onSnapshot((snapshot => callback(snapshot.docs.map(doc => doc.data()))))
+  }
+
+  getGenericSlots(callback) {
+    const slotsRef = this.database.collection('slots');
+
+    return slotsRef.onSnapshot(snapshot => callback(snapshot.docs.reduce((acc, doc) => ({...acc, [doc.id]: doc.data()}), {})));
+  }
+
+  getSlotsForWeek(userId, day, callback) {
+    const appointmentsRef = this.database.collection('appointments');
 
     const pureDay = getPureDay(day.day(0));
 
     const query = appointmentsRef
-      .where('time', '>', pureDay.toDate())
-      .where('time', '<', pureDay.add(7, 'day').toDate())
-      .where('scheduled', '==', false);
+      .where('date', '>', pureDay.toDate())
+      .where('date', '<', pureDay.add(7, 'day').toDate());
 
     return query.onSnapshot((snapshot => callback(snapshot.docs.map(doc => doc.data()))))
   }
 
-  async createAppointment(time) {
-    const appointmentsRef = this.database.collection('availableHours');
-    const query = appointmentsRef
-      .where('time', '==', getPureHour(time).toDate())
-      .where('scheduled', '==', false);
+  async createAppointment(time, userId) {
+    const appointmentsRef = this.database.collection('appointments');
 
-    const hours = await query.get();
-
-    const hourToReplace = hours.docs[0].id;
-
-    await appointmentsRef.doc(hourToReplace).set({
-      time: getPureHour(time).toDate(),
-      scheduled: true,
+    await appointmentsRef.add({
+      date: getPureHour(time).toDate(),
+      user: userId,
     });
   }
 
   async toggleSlotByTime(time) {
-    const appointmentsRef = this.database.collection('availableHours');
-    const query = appointmentsRef
-      .where('time', '==', getPureHour(time).toDate());
+    const slotsRef = this.database.collection('slots');
 
-    const slots = await query.get();
+    const dayDoc = slotsRef.doc(`${time.day()}`);
 
-    if (slots.empty) {
-      return appointmentsRef.add({
-        time: getPureHour(time).toDate(),
-        scheduled: false,
-      });
+    const day = await dayDoc.get();
+
+    const hour = time.hour();
+
+    if (day.exists && day.data().availableHours.includes(hour)) {
+      return dayDoc.update({
+        availableHours: firebase.firestore.FieldValue.arrayRemove(hour)
+      })
     }
 
-    return slots.docs[0].ref.delete();
+    if (day.exists) {
+      return dayDoc.update({
+        availableHours: firebase.firestore.FieldValue.arrayUnion(hour)
+      })
+    }
+
+    return dayDoc.set({availableHours: [hour]})
   }
 
   async getAppointmentDetailByTime(time) {
-    const appointmentsRef = this.database.collection('availableHours');
+    const appointmentsRef = this.database.collection('appointments');
     const query = appointmentsRef
-      .where('time', '==', getPureHour(time).toDate())
-      .where('scheduled', '==', true);
+      .where('date', '==', getPureHour(time).toDate());
 
     const appointments = await query.get();
 

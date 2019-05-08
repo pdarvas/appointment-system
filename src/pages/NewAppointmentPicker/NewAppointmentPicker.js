@@ -10,6 +10,7 @@ import {Paper} from '../../components/Paper';
 import {LoadingOverlay} from '../../components/LoadingOverlay/LoadingOverlay';
 import {useFreeSlotsForWeek} from '../../hooks/useFreeSlotsForWeek';
 import {AuthContext} from '../../components/Routes/Routes';
+import {ScheduleHelper} from '../../components/ScheduleHelper';
 
 const PickerContainer = styled.div`
   display: flex;
@@ -39,6 +40,10 @@ export const NewAppointmentPicker = (props) => {
   };
 
   return loading ? <LoadingOverlay/> : <Paper>
+    <ScheduleHelper>
+      Os horários disponíveis estão marcados em verde abaixo.<br/>
+      Clique em um para agendar a sua consulta.
+    </ScheduleHelper>
     <PickerContainer>
       {confirmationOpen &&
       <Dialog

@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import {Paper} from '../../components/Paper';
 import {LoadingOverlay} from '../../components/LoadingOverlay/LoadingOverlay';
 import {AuthContext} from '../../components/Routes/Routes';
+import {ScheduleHelper} from '../../components/ScheduleHelper';
 
 const PickerContainer = styled.div`
   display: flex;
@@ -69,6 +70,10 @@ export const ScheduledAppointmentsViewer = () => {
   };
 
   return loading ? <LoadingOverlay/> : <Paper>
+    <ScheduleHelper>
+      Suas consultas agendadas estão marcadas em azul abaixo. <br/>
+      Clique em uma para ver as informações ou cancelá-la.
+    </ScheduleHelper>
     <PickerContainer>
       {appointmentDetail &&
       <Dialog

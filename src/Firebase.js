@@ -127,6 +127,12 @@ class Firebase {
       ...user.data()
     }
   }
+
+  async createUser(id, user) {
+    const usersRef = this.database.collection('users');
+
+    return usersRef.doc(id).set(user);
+  }
 }
 
 const getPureDay = (time) => {

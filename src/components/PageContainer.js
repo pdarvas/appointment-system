@@ -3,7 +3,7 @@ import {AppBar as MUIAppBar, IconButton} from '@material-ui/core';
 import React, {useContext} from 'react';
 import {withRouter} from 'react-router';
 import Exit from '@material-ui/icons/ExitToApp'
-import {AuthContext} from '../App';
+import {AuthContext} from './Routes/Routes';
 
 export const Container = styled.div`
   position: relative;
@@ -36,6 +36,7 @@ export const Tab = styled.div`
     background-color: rgba(255,255,255,0.32);
   }
 `;
+
 export const AppBar = styled(MUIAppBar)`
   height: 64px;
   display: flex;
@@ -45,7 +46,6 @@ export const AppBar = styled(MUIAppBar)`
   background-color: #002060;
 `;
 
-
 export const PageContainer = withRouter((props) => {
   const {logout} = useContext(AuthContext);
   const onClickTab = (path) => () => {
@@ -54,6 +54,7 @@ export const PageContainer = withRouter((props) => {
   return <Container>
     <AppBar>
       {props.menuItems.map((item) => <Tab
+        key={item.path}
         selected={props.location.pathname === item.path}
         onClick={onClickTab(item.path)}
       >

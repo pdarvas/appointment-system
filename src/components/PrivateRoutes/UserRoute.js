@@ -1,10 +1,9 @@
 import React, {useContext, useEffect} from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {PageContainer} from '../PageContainer';
-import {NewAppointmentPicker} from '../NewAppointmentPicker/NewAppointmentPicker';
-import {AvailabilityPicker} from '../AvailabilityPicker/AvailabilityPicker';
-import {ScheduledAppointmentsViewer} from '../ScheduledAppointmentsViewer/ScheduledAppointmentsViewer';
-import {AuthContext} from '../../App';
+import {NewAppointmentPicker} from '../../pages/NewAppointmentPicker/NewAppointmentPicker';
+import {ScheduledAppointmentsViewer} from '../../pages/ScheduledAppointmentsViewer/ScheduledAppointmentsViewer';
+import {AuthContext} from '../Routes/Routes';
 
 const userPages = [
   {
@@ -19,15 +18,14 @@ const userPages = [
 export const UserRoute = ({match, history}) => {
   const {user} = useContext(AuthContext);
 
-  if (!user) {
-    history.replace('/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      history.replace('/login');
+    } else if (user.admin) {
+      history.replace('/admin');
+    }
+  }, [user, history]);
 
-  if (user.admin) {
-    history.replace('/admin');
-    return null;
-  }
 
   return <PageContainer
     menuItems={userPages}

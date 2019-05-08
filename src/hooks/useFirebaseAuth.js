@@ -7,14 +7,14 @@ export const useFirebaseAuth = () => {
 
   useEffect(() => {
     return Firebase.auth.onAuthStateChanged(auth => {
-      if(auth) {
+      if (auth) {
         Firebase.getUser(auth.uid).then((user) => {
-          setLoading(false);
           setUser(user);
-        });
+          setLoading(false);
+        }).catch(() => setLoading(false));
       } else {
-        setLoading(false);
         setUser(undefined);
+        setLoading(false);
       }
     })
   }, []);
@@ -22,17 +22,33 @@ export const useFirebaseAuth = () => {
   const login = (email, password) => {
     setLoading(true);
     return Firebase.auth.signInWithEmailAndPassword(email, password)
+      .catch((error) => {
+        setLoading(false);
+        throw error;
+      })
   };
 
-  const signUp = (user) => {
+  const signup = (user) => {
     setLoading(true);
-    Firebase.auth.createUserWithEmailAndPassword(user.email, user.password)
+    return Firebase.auth.createUserWithEmailAndPassword(user.email, user.password)
+      .then(auth => Firebase.createUser(auth.user.uid, {
+        name:user.name,
+        email: user.email,
+        phone: user.phone
+      })).catch((error) => {
+        setLoading(false);
+        throw error;
+      })
   };
 
   const logout = () => {
     setLoading(true);
     Firebase.auth.signOut()
+      .catch((error) => {
+        setLoading(false);
+        throw error;
+    })
   };
 
-  return {loading, user, login, signUp, logout}
+  return {loading, user, login, signup, logout}
 };

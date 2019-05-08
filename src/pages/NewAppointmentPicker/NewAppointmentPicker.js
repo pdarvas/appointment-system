@@ -1,15 +1,15 @@
 import React, {useContext, useState} from 'react';
-import {Schedule} from '../Schedule/Schedule';
-import Button from '@material-ui/core/Button';
+import {Schedule} from '../../components/Schedule/Schedule';
+import Button from '@material-ui/core/Button/index';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import styled from 'styled-components';
 import Firebase from '../../Firebase';
-import {Dialog} from '../Dialog/Dialog';
-import {Paper} from '../Paper';
-import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
+import {Dialog} from '../../components/Dialog/Dialog';
+import {Paper} from '../../components/Paper';
+import {LoadingOverlay} from '../../components/LoadingOverlay/LoadingOverlay';
 import {useFreeSlotsForWeek} from '../../hooks/useFreeSlotsForWeek';
-import {AuthContext} from '../../App';
+import {AuthContext} from '../../components/Routes/Routes';
 
 const PickerContainer = styled.div`
   display: flex;

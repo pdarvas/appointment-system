@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import Firebase from '../Firebase';
-import {AuthContext} from '../App';
+import {AuthContext} from '../components/Routes/Routes';
 
 const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

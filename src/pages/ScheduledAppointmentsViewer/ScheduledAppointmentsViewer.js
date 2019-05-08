@@ -1,23 +1,51 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useAppointmensSchedule} from '../../hooks/useAppointmentsSchedule';
 import Firebase from '../../Firebase';
-import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button/index';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 import NavigateBefore from '@material-ui/icons/NavigateBefore';
-import {Schedule} from '../Schedule/Schedule';
+import {Schedule} from '../../components/Schedule/Schedule';
 import styled from 'styled-components';
-import {Dialog} from '../Dialog/Dialog';
+import {Dialog} from '../../components/Dialog/Dialog';
 import dayjs from 'dayjs';
-import {Paper} from '../Paper';
-import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
+import {Paper} from '../../components/Paper';
+import {LoadingOverlay} from '../../components/LoadingOverlay/LoadingOverlay';
+import {AuthContext} from '../../components/Routes/Routes';
 
 const PickerContainer = styled.div`
   display: flex;
 `;
 
+const getDialogText = (appointmentDetail, user) => {
+  const date = dayjs(appointmentDetail.date.toDate());
+  if (!user.admin) {
+    return `Seguem as informações da sua consulta:
+    
+      Data: ${date.format('DD/MM')}
+      Horário: ${date.format('HH:mm')}
+      
+      Você pode cancelá-la no botão abaixo`
+  }
+
+  return `Seguem as informações da consulta:
+  
+  Nome: ${appointmentDetail.name}
+  Email: ${appointmentDetail.email}
+  Telefone: ${appointmentDetail.phone}
+  
+  Data: ${date.format('DD/MM')}
+  Horário: ${date.format('HH:mm')}
+  
+  Você pode cancelá-la no botão abaixo
+  `
+
+};
+
+
 export const ScheduledAppointmentsViewer = () => {
   const {schedule, getLastWeek, getNextWeek, loading} = useAppointmensSchedule();
   const [appointmentDetail, setAppointmentDetail] = useState(undefined);
+  const {user} = useContext(AuthContext);
 
   const getUserForAppointment = (appointment) => {
     Firebase.getUser(appointment.user).then(user => {
@@ -46,11 +74,10 @@ export const ScheduledAppointmentsViewer = () => {
         open={appointmentDetail}
         onClose={closeDialog}
         title={'Agendamento'}
-        text={`Data: ${dayjs(appointmentDetail.date.toDate()).format('DD:MM')}
-      Horário: ${dayjs(appointmentDetail.date.toDate()).format('HH:mm')}`}
+        text={getDialogText(appointmentDetail, user)}
         actions={[
           <Button onClick={closeDialog}>Fechar</Button>,
-          <Button onClick={onDelete}>Excluir</Button>
+          <Button onClick={onDelete}>Cancelar</Button>
         ]}
       />}
       <Button onClick={getLastWeek}><NavigateBefore/></Button>

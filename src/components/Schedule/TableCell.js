@@ -10,6 +10,7 @@ const TableCellContainer = styled.div`
   align-items: center;
   justify-content: center;
   white-space: pre-line;
+  text-align: center;
   ${(props) => getCSSForCellState(props.state)}
 `;
 

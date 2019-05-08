@@ -19,7 +19,7 @@ const PickerContainer = styled.div`
 const getDialogText = (appointmentDetail, user) => {
   const date = dayjs(appointmentDetail.date.toDate());
   if (!user.admin) {
-    return `Seguem as informações da sua consulta:
+    return `Informações da consulta
     
       Data: ${date.format('DD/MM')}
       Horário: ${date.format('HH:mm')}
@@ -27,7 +27,8 @@ const getDialogText = (appointmentDetail, user) => {
       Você pode cancelá-la no botão abaixo`
   }
 
-  return `Seguem as informações da consulta:
+  return `
+  Informações da consulta
   
   Nome: ${appointmentDetail.name}
   Email: ${appointmentDetail.email}

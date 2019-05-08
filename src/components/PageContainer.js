@@ -15,6 +15,10 @@ export const Container = styled.div`
   background-color: #eceff1;
 `;
 
+const WhiteIconButton = styled(IconButton)`
+  color: white;
+`;
+
 export const Tab = styled.div`
   height: 100%;
   padding: 10px;
@@ -37,6 +41,18 @@ export const Tab = styled.div`
   }
 `;
 
+export const UserInfo = styled.div`
+  height: 100%;
+  padding: 10px;
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  text-align: center;
+  margin-left: auto;
+`;
+
 export const AppBar = styled(MUIAppBar)`
   height: 64px;
   display: flex;
@@ -44,10 +60,11 @@ export const AppBar = styled(MUIAppBar)`
   padding: 0 24px;
   flex-direction: row;
   background-color: #002060;
+ 
 `;
 
 export const PageContainer = withRouter((props) => {
-  const {logout} = useContext(AuthContext);
+  const {logout, user} = useContext(AuthContext);
   const onClickTab = (path) => () => {
     props.history.push(path);
   };
@@ -60,12 +77,11 @@ export const PageContainer = withRouter((props) => {
       >
         {item.label}
       </Tab>)}
-      <IconButton
-        onClick={logout}
-        style={{color: 'white', marginLeft: 'auto'}}
-      >
+
+      {user && <UserInfo>{user.admin ? 'Administrador' : user.name}</UserInfo>}
+      <WhiteIconButton onClick={logout}>
         <Exit/>
-      </IconButton>
+      </WhiteIconButton>
     </AppBar>
     {props.children}
   </Container>;

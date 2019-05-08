@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment} from 'react';
 import styled from 'styled-components';
 import {TableCell} from './TableCell';
 import {TableColumn} from './TableColumn';

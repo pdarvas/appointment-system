@@ -1,8 +1,5 @@
-import React, {Fragment, useState} from 'react';
+import React from 'react';
 import {Schedule} from '../../components/Schedule/Schedule';
-import Button from '@material-ui/core/Button/index';
-import NavigateNext from '@material-ui/icons/NavigateNext';
-import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import styled from 'styled-components';
 import Firebase from '../../Firebase';
 import {useGenericFreeSlots} from '../../hooks/useGenericFreeSlots';

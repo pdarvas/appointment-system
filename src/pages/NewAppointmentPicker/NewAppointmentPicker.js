@@ -22,7 +22,7 @@ export const NewAppointmentPicker = (props) => {
   const {user} = useContext(AuthContext);
 
   const onClickCell = (day) => (hour) => {
-    setSelectedTime(day.hour(hour));
+    setSelectedTime(day.hour(hour).minute(0));
     setConfirmationOpen(true);
   };
 
@@ -58,19 +58,3 @@ export const NewAppointmentPicker = (props) => {
     </PickerContainer>
   </Paper>;
 };
-
-// const onClickCell = (day) => (hour) => {
-//   const hourIndex = schedule[day].selectedHours.indexOf(hour);
-//   const newSchedule = [...schedule];
-//   const newSelectedHours = [...schedule[day].selectedHours];
-//
-//   if (hourIndex > -1) {
-//     newSelectedHours.splice(hourIndex, 1);
-//   } else {
-//     newSelectedHours.push(hour);
-//   }
-//
-//   newSchedule[day].selectedHours = newSelectedHours;
-//
-//   setSchedule(newSchedule);
-// };

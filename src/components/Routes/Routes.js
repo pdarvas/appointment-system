@@ -1,5 +1,5 @@
 import {LoadingOverlay} from '../LoadingOverlay/LoadingOverlay';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
 import {Login} from '../../pages/Login/Login';
 import {AdminRoute} from '../PrivateRoutes/AdminRoute';
 import {UserRoute} from '../PrivateRoutes/UserRoute';
@@ -25,6 +25,7 @@ export const Routes = () => {
         <Route path={'/signup'} component={SignUp}/>
         <Route path={'/admin'} component={AdminRoute}/>
         <Route path={'/user'} component={UserRoute}/>
+        <Redirect to={'/login'}/>
       </Switch>
     </BrowserRouter>
   </AuthContext.Provider>

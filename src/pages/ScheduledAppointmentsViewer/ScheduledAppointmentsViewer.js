@@ -65,7 +65,7 @@ export const ScheduledAppointmentsViewer = () => {
   };
 
   const onDelete = () => {
-    Firebase.deleteAppointment(appointmentDetail.id);
+    Firebase.deleteAppointment(appointmentDetail.appointmentId);
     closeDialog();
   };
 

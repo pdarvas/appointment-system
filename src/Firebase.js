@@ -106,15 +106,15 @@ class Firebase {
     const appointments = await query.get();
 
     if (!appointments.empty) {
-     return {...appointments.docs[0].data(), id: appointments.docs[0].id}
+     return {...appointments.docs[0].data(), appointmentId: appointments.docs[0].id}
     }
     return undefined
   }
 
   async deleteAppointment(id) {
-    const appointmentsRef = this.database.collection('availableHours');
+    const appointmentsRef = this.database.collection('appointments');
 
-    return appointmentsRef.doc(id).update({scheduled: false});
+    return appointmentsRef.doc(id).delete();
   }
 
   async getUser(id) {

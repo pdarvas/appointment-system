@@ -15,7 +15,6 @@ export const AvailabilityPicker = () => {
   const {schedule, loading} = useGenericFreeSlots();
 
   const onClickCell = (day) => (hour) => {
-    console.log('asasd')
     Firebase.toggleSlotByTime(day.hour(hour));
   };
 
